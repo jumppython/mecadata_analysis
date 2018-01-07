@@ -44,14 +44,14 @@ for area_i in range(1,48):
 		maintype_i += 1
 		maintypestr = 'maintype%d' % maintype_i
 		df_main = df_area[df_area['main_type']==maintype]
-		rs_main = df_main.groupby(['mid_type'])['mid_type'].count().reset_index(name='count').sort_values(['count'],ascending=False).head(5)
+		rs_main = df_main.groupby(['mid_type'])['mid_type'].count().reset_index(name='count').sort_values(['count'],ascending=False).head(10)
 		rs_main.to_json(os.path.join(bp,'html','json',areastr+'_'+maintypestr+'_midtype.json'),orient='records')
 		midtype_i = 0
 		for midtype in rs_main['mid_type']:
 			midtype_i += 1
 			midtypestr = 'midtype%d' % midtype_i
 			df_mid = df_main[df_main['mid_type']==midtype]
-			rs_mid = df_mid.groupby(['sub_type'])['sub_type'].count().reset_index(name='count').sort_values(['count'],ascending=False).head(3)
+			rs_mid = df_mid.groupby(['sub_type'])['sub_type'].count().reset_index(name='count').sort_values(['count'],ascending=False).head(10)
 			rs_mid.to_json(os.path.join(bp,'html','json',areastr+'_'+maintypestr+'_'+midtypestr+'_subtype.json'),orient='records')
 
 

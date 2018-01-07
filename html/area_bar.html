@@ -4,13 +4,25 @@
 <script>
 window.onload = function() {
 
+var mySel = document.getElementById("area_select");
+var myMats = document.getElementById("main_type_space");
+var myMits = document.getElementById("mid_type_space");
+
+var areaValueList = [];
+var areaNameList = [];
+
+var current_area = "1";
+var current_maintype = "";
+
 var dataPoints = [];
+var dataPoints_midtype = [];
+var dataPoints_subtype = [];
 
 var chart = new CanvasJS.Chart("chartContainer", {
-	animationEnabled: true,
+	animationEnabled: false,
 	theme: "light2",
 	title: {
-		text: "area 1 - top 10 main_type count"
+		text: "\u5317\u6d77\u9053"
 	},
 	axisY: {
 		title: "count",
@@ -18,9 +30,43 @@ var chart = new CanvasJS.Chart("chartContainer", {
 	},
 	data: [{
 		type: "column",
+		click: onClick_maintype,
 		dataPoints: dataPoints
 	}]
 });
+
+var chart_midtype = new CanvasJS.Chart("main_type_space", {
+	animationEnabled: false,
+	theme: "light2",
+	title: {
+		text: ""
+	},
+	axisY: {
+		title: "count",
+		titleFontSize: 24
+	},
+	data: [{
+		type: "column",
+		click: onClick_midtype,
+		dataPoints: dataPoints_midtype
+	}]
+});
+
+var chart_subtype = new CanvasJS.Chart("mid_type_space", {
+	animationEnabled: false,
+	theme: "light2",
+	title: {
+		text: ""
+	},
+	axisY: {
+		title: "count",
+		titleFontSize: 24
+	},
+	data: [{
+		type: "column",
+		dataPoints: dataPoints_subtype
+	}]
+})
 
 function addData(data) {
 	for (var i = 0; i < data.length; i++) {
@@ -29,12 +75,88 @@ function addData(data) {
 			y: data[i].count
 		});
 	}
+	//alert(dataPoints[0].label)
 	chart.render();
 
 }
 
-$.getJSON("./json/area2_maintype.json", addData);
+function addData_midtype(data) {
+	for (var i = 0; i < data.length; i++) {
+		dataPoints_midtype.push({
+			label: data[i].mid_type,
+			y: data[i].count
+		});
+	}
+	//alert(dataPoints_midtype[0].y)
+	chart_midtype.render();
+}
 
+function addData_subtype(data) {
+	for (var i = 0; i < data.length; i++) {
+		dataPoints_subtype.push({
+			label: data[i].sub_type,
+			y: data[i].count
+		});
+	}
+
+	chart_subtype.render();
+}
+
+function addArea(data){
+	for (var i=0; i < data.length; i++) {
+		areaValueList.push(
+			data[i].area_id
+		);
+		areaNameList.push(
+			data[i].area_name
+		);
+	}
+	for (var i=0; i<areaValueList.length; i++){
+		var option = document.createElement("option");
+		option.value = areaValueList[i];
+		option.text = areaNameList[i];
+		mySel.appendChild(option);
+	}
+}
+
+function onClick_maintype(e) {
+	chart_midtype.options.title.text = e.dataPoint.label;
+	var index = (e.dataPointIndex + 1).toString()
+	dataPoints_midtype = []
+	$.getJSON("./json/area".concat(current_area).concat("_maintype").concat(index).concat("_midtype.json"), addData_midtype);
+	chart_midtype.options.data[0].dataPoints = dataPoints_midtype
+	current_maintype = index
+	chart_subtype.options.data[0].dataPoints = []
+	chart_subtype.options.title.text = ""
+	chart_subtype.render()
+}
+
+function onClick_midtype(e) {
+	chart_subtype.options.title.text = e.dataPoint.label;
+	var index = (e.dataPointIndex + 1).toString()
+	dataPoints_subtype = []
+	$.getJSON("./json/area".concat(current_area).concat("_maintype").concat(current_maintype).concat("_midtype").concat(index).concat("_subtype.json"), addData_subtype);
+	chart_subtype.options.data[0].dataPoints = dataPoints_subtype
+}
+
+$.getJSON("./json/area1_maintype.json", addData);
+$.getJSON("./area.json", addArea);
+$("#area_select").change(function() {
+	var selected_area_name = $("#area_select option:selected").text();
+	var selected_area_id = $("#area_select option:selected").val().toString();
+	chart.options.title.text = $("#area_select option:selected").text();
+	dataPoints = [];
+	$.getJSON("./json/area".concat(selected_area_id).concat("_maintype.json"), addData);
+	chart.options.data[0].dataPoints = dataPoints;
+	chart.render();
+	current_area = selected_area_id
+	chart_midtype.options.data[0].dataPoints = []
+	chart_midtype.options.title.text = ""
+	chart_subtype.options.data[0].dataPoints = []
+	chart_subtype.options.title.text = ""
+	chart_midtype.render()
+	chart_subtype.render()
+});
 }
 </script>
 </head>
@@ -42,5 +164,9 @@ $.getJSON("./json/area2_maintype.json", addData);
 <div id="chartContainer" style="height: 300px; width: 100%;"></div>
 <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
 <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+<select id="area_select"></select>
+<div id="main_type_space" style="height: 300px; width: 100%;"></div>
+<div id="mid_type_space" style="height: 300px; width: 100%;"></div>
+</table>
 </body>
 </html>
