@@ -192,10 +192,17 @@ function onClick_subtype(e) {
 	while (myItems.firstChild) {
 		myItems.removeChild(myItems.firstChild);
 	}
+	var font = document.createElement("font");
+	font.id = "#itemlist";
+	font.innerHTML = e.dataPoint.label;
+	font.size = 5;
+	font.color = "#FFFFFF";
+	font.style = "background-color:#0000FF";
+	myItems.appendChild(font);
 	itemIdList = [];
 	itemPriceList = [];
 	$.getJSON("./json/area".concat(current_area).concat("_maintype").concat(current_maintype).concat("_midtype").concat(current_midtype).concat("_subtype_").concat(index).concat(".json"), addItemlist);
-	location.href = "#itemlist"
+	location.href = "#itemlist";
 }
 
 $.getJSON("./json/area1_maintype.json", addData);
@@ -233,7 +240,6 @@ $("#area_select").change(function() {
 <div id="mid_type_space" style="height: 300px; width: 100%;"></div>
 <hr>
 <div id="itemlist"></div>
-<a href="#itemlist" />
 <hr>
 </table>
 </body>
