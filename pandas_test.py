@@ -17,7 +17,7 @@ bp = os.path.join(os.path.expanduser('~'),'DataAnalysis','mecadata')
 fp = os.path.join(bp,'area_info.csv')
 da = pd.read_csv(fp,names=['area_id','area_name','area_url'])
 
-fp = os.path.join(bp,'items_iteminfo_4.csv')
+fp = os.path.join(bp,'items_iteminfo_47.csv')
 df = pd.read_csv(fp)
 #price = df['price']
 #count, division = np.histogram(price,bins=[i for i in range(0,1000,2)],range=(0,100))
@@ -53,6 +53,12 @@ for area_i in range(1,48):
 			df_mid = df_main[df_main['mid_type']==midtype]
 			rs_mid = df_mid.groupby(['sub_type'])['sub_type'].count().reset_index(name='count').sort_values(['count'],ascending=False).head(10)
 			rs_mid.to_json(os.path.join(bp,'html','json',areastr+'_'+maintypestr+'_'+midtypestr+'_subtype.json'),orient='records')
+			subtype_i = 0
+			for subtype in rs_mid['sub_type']:
+				subtype_i += 1
+				subtypestr = '_%d' % subtype_i
+				df_sub = df_mid[df_mid['sub_type']==subtype][['item_id','price_text','price']].sort_values(['price'],ascending=True)
+				df_sub.to_json(os.path.join(bp,'html','json',areastr+'_'+maintypestr+'_'+midtypestr+'_subtype'+subtypestr+'.json'),orient='records')
 
 
 

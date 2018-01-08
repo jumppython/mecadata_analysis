@@ -7,12 +7,17 @@ window.onload = function() {
 var mySel = document.getElementById("area_select");
 var myMats = document.getElementById("main_type_space");
 var myMits = document.getElementById("mid_type_space");
+var myItems = document.getElementById("itemlist")
 
 var areaValueList = [];
 var areaNameList = [];
 
+var itemPriceList = [];
+var itemIdList = [];
+
 var current_area = "1";
 var current_maintype = "";
+var current_midtype = "";
 
 var dataPoints = [];
 var dataPoints_midtype = [];
@@ -64,6 +69,7 @@ var chart_subtype = new CanvasJS.Chart("mid_type_space", {
 	},
 	data: [{
 		type: "column",
+		click: onClick_subtype,
 		dataPoints: dataPoints_subtype
 	}]
 })
@@ -119,24 +125,77 @@ function addArea(data){
 	}
 }
 
+function addItemlist(data) {
+	for (var i=0; i < data.length; i++) {
+		itemIdList.push(
+			data[i].item_id
+		);
+		itemPriceList.push(
+			data[i].price_text
+		);
+	}
+	myItems.appendChild(document.createElement("br"))
+	for (var i=0; i<itemIdList.length; i++) {
+		var itemurl = "https://item.mercari.com/jp/".concat(itemIdList[i]);
+		var itemprice = itemPriceList[i];
+		//var linktext = document.createTextNode(itemprice);
+		var font = document.createElement("font");
+		if (i < 4) {
+			font.size = (6 - i)
+		} else {
+			font.size = 3
+		}
+		//font.appendChild(linktext)
+		font.innerHTML = itemprice
+		var a = document.createElement("a");
+		a.appendChild(font);
+		a.target = "_blank"
+		a.href = itemurl;
+		myItems.appendChild(a);
+		myItems.appendChild(document.createElement("br"))
+	}
+}
+
 function onClick_maintype(e) {
 	chart_midtype.options.title.text = e.dataPoint.label;
-	var index = (e.dataPointIndex + 1).toString()
-	dataPoints_midtype = []
+	var index = (e.dataPointIndex + 1).toString();
+	dataPoints_midtype = [];
 	$.getJSON("./json/area".concat(current_area).concat("_maintype").concat(index).concat("_midtype.json"), addData_midtype);
-	chart_midtype.options.data[0].dataPoints = dataPoints_midtype
-	current_maintype = index
-	chart_subtype.options.data[0].dataPoints = []
-	chart_subtype.options.title.text = ""
-	chart_subtype.render()
+	chart_midtype.options.data[0].dataPoints = dataPoints_midtype;
+	current_maintype = index;
+	chart_subtype.options.data[0].dataPoints = [];
+	chart_subtype.options.title.text = "";
+	chart_subtype.render();
+	while (myItems.firstChild) {
+		myItems.removeChild(myItems.firstChild);
+	}
+	itemIdList = [];
+	itemPriceList = [];
 }
 
 function onClick_midtype(e) {
 	chart_subtype.options.title.text = e.dataPoint.label;
-	var index = (e.dataPointIndex + 1).toString()
-	dataPoints_subtype = []
+	var index = (e.dataPointIndex + 1).toString();
+	dataPoints_subtype = [];
 	$.getJSON("./json/area".concat(current_area).concat("_maintype").concat(current_maintype).concat("_midtype").concat(index).concat("_subtype.json"), addData_subtype);
-	chart_subtype.options.data[0].dataPoints = dataPoints_subtype
+	chart_subtype.options.data[0].dataPoints = dataPoints_subtype;
+	current_midtype = index
+	while (myItems.firstChild) {
+		myItems.removeChild(myItems.firstChild);
+	}
+	itemIdList = [];
+	itemPriceList = [];
+}
+
+function onClick_subtype(e) {
+	var index = (e.dataPointIndex + 1).toString();
+	while (myItems.firstChild) {
+		myItems.removeChild(myItems.firstChild);
+	}
+	itemIdList = [];
+	itemPriceList = [];
+	$.getJSON("./json/area".concat(current_area).concat("_maintype").concat(current_maintype).concat("_midtype").concat(current_midtype).concat("_subtype_").concat(index).concat(".json"), addItemlist);
+	location.href = "#itemlist"
 }
 
 $.getJSON("./json/area1_maintype.json", addData);
@@ -149,13 +208,18 @@ $("#area_select").change(function() {
 	$.getJSON("./json/area".concat(selected_area_id).concat("_maintype.json"), addData);
 	chart.options.data[0].dataPoints = dataPoints;
 	chart.render();
-	current_area = selected_area_id
-	chart_midtype.options.data[0].dataPoints = []
-	chart_midtype.options.title.text = ""
-	chart_subtype.options.data[0].dataPoints = []
-	chart_subtype.options.title.text = ""
-	chart_midtype.render()
-	chart_subtype.render()
+	current_area = selected_area_id;
+	chart_midtype.options.data[0].dataPoints = [];
+	chart_midtype.options.title.text = "";
+	chart_subtype.options.data[0].dataPoints = [];
+	chart_subtype.options.title.text = "";
+	chart_midtype.render();
+	chart_subtype.render();
+	while (myItems.firstChild) {
+		myItems.removeChild(myItems.firstChild);
+	}
+	itemIdList = [];
+	itemPriceList = [];
 });
 }
 </script>
@@ -167,6 +231,10 @@ $("#area_select").change(function() {
 <select id="area_select"></select>
 <div id="main_type_space" style="height: 300px; width: 100%;"></div>
 <div id="mid_type_space" style="height: 300px; width: 100%;"></div>
+<hr>
+<div id="itemlist"></div>
+<a href="#itemlist" />
+<hr>
 </table>
 </body>
 </html>
