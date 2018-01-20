@@ -7,7 +7,7 @@ window.onload = function() {
 var mySel = document.getElementById("area_select");
 var myMats = document.getElementById("main_type_space");
 var myMits = document.getElementById("mid_type_space");
-var myItems = document.getElementById("itemlist")
+var myItems = document.getElementById("itemlist");
 
 var areaValueList = [];
 var areaNameList = [];
@@ -134,25 +134,26 @@ function addItemlist(data) {
 			data[i].price_text
 		);
 	}
-	myItems.appendChild(document.createElement("br"))
+	myItems.appendChild(document.createElement("br"));
 	for (var i=0; i<itemIdList.length; i++) {
 		var itemurl = "https://item.mercari.com/jp/".concat(itemIdList[i]);
 		var itemprice = itemPriceList[i];
 		//var linktext = document.createTextNode(itemprice);
 		var font = document.createElement("font");
 		if (i < 4) {
-			font.size = (6 - i)
+			font.size = (6 - i);
 		} else {
-			font.size = 3
+			font.size = 3;
 		}
 		//font.appendChild(linktext)
-		font.innerHTML = itemprice
+		font.innerHTML = itemprice;
 		var a = document.createElement("a");
 		a.appendChild(font);
-		a.target = "_blank"
+		a.id = "itemurl";
+		a.target = "_blank";
 		a.href = itemurl;
 		myItems.appendChild(a);
-		myItems.appendChild(document.createElement("br"))
+		myItems.appendChild(document.createElement("br"));
 	}
 }
 
@@ -239,7 +240,13 @@ $("#area_select").change(function() {
 <div id="main_type_space" style="height: 300px; width: 100%;"></div>
 <div id="mid_type_space" style="height: 300px; width: 100%;"></div>
 <hr>
-<div id="itemlist"></div>
+<table><tr>
+	<td>
+		<div id="itemlist" style="width: 100%;"></div>
+	</td><td>
+		<div id="iteminfospace" style="width: 100%;"></div>
+	</td>
+</tr></table>
 <hr>
 </table>
 </body>
