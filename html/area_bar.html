@@ -8,7 +8,7 @@ var mySel = document.getElementById("area_select");
 var myMats = document.getElementById("main_type_space");
 var myMits = document.getElementById("mid_type_space");
 var myItems = document.getElementById("itemlist");
-var itemInfoFrame = document.getElementById("iteminfoframe");
+var itemInfoSpace = document.getElementById("iteminfospace");
 
 var areaValueList = [];
 var areaNameList = [];
@@ -158,7 +158,7 @@ function addItemlist(data) {
 		//var itemurl = "https://item.mercari.com/jp/".concat(itemIdList[i]);
 		//var itemprice = itemPriceList[i];
 		//var itemurl = "https://item.mercari.com/jp/".concat(itemInfos[i].itemid);
-		var itemid = itemInfos[i].itemid;
+		let itemid = itemInfos[i].itemid;
 		var itemprice = itemInfos[i].price;
 		//var linktext = document.createTextNode(itemprice);
 		var font = document.createElement("font");
@@ -172,9 +172,9 @@ function addItemlist(data) {
 		var a = document.createElement("a");
 		a.appendChild(font);
 		a.id = "itemurl";
-		a.target = "iteminfoframe";
+		//a.target = "iteminfospace";
 		//a.href = itemurl;
-		a.href = "javascript:void(0);"
+		a.href = "javascript:void(0);";
 		a.addEventListener('click', function(){
 			onClick_item(itemid);
 		});
@@ -196,8 +196,13 @@ function onClick_maintype(e) {
 	while (myItems.firstChild) {
 		myItems.removeChild(myItems.firstChild);
 	}
-	itemIdList = [];
-	itemPriceList = [];
+	//itemIdList = [];
+	//itemPriceList = [];
+	itemInfos = [];
+	location.href = "#maintypehead";
+	while (itemInfoSpace.firstChild) {
+		itemInfoSpace.removeChild(itemInfoSpace.firstChild);
+	}
 }
 
 function onClick_midtype(e) {
@@ -210,8 +215,13 @@ function onClick_midtype(e) {
 	while (myItems.firstChild) {
 		myItems.removeChild(myItems.firstChild);
 	}
-	itemIdList = [];
-	itemPriceList = [];
+	//itemIdList = [];
+	//itemPriceList = [];
+	itemInfos = [];
+	location.href = "#midtypehead";
+	while (itemInfoSpace.firstChild) {
+		itemInfoSpace.removeChild(itemInfoSpace.firstChild);
+	}
 }
 
 function onClick_subtype(e) {
@@ -226,13 +236,20 @@ function onClick_subtype(e) {
 	font.color = "#FFFFFF";
 	font.style = "background-color:#0000FF";
 	myItems.appendChild(font);
-	itemIdList = [];
-	itemPriceList = [];
+	//itemIdList = [];
+	//itemPriceList = [];
+	itemInfos = [];
 	$.getJSON("./json/area".concat(current_area).concat("_maintype").concat(current_maintype).concat("_midtype").concat(current_midtype).concat("_subtype_").concat(index).concat(".json"), addItemlist);
 	location.href = "#itemlist";
+	while (itemInfoSpace.firstChild) {
+		itemInfoSpace.removeChild(itemInfoSpace.firstChild);
+	}
 }
 
 function onClick_item(itemid) {
+	while (itemInfoSpace.firstChild) {
+		itemInfoSpace.removeChild(itemInfoSpace.firstChild);
+	}
 	var target_elem = [];
 	for (var elem in itemInfos){
 		if(itemInfos[elem].itemid == itemid){
@@ -240,12 +257,50 @@ function onClick_item(itemid) {
 			break;
 		}
 	}
-	for (var info in target_elem){
-		alert(target_elem[info])
-		//var infofont = document.createElement("font")
-		//infofont.innerHTML = target_elem[info]
-		//itemInfoFrame.appendChild(infofont)
-	}
+	var username_font = document.createElement("font");
+	var itemstate_font = document.createElement("font");
+	var deliverychargeburden_font = document.createElement("font");
+	var deliverymethod_font = document.createElement("font");
+	var shipmentdatecriterion_font = document.createElement("font");
+	username_font.innerHTML = "&emsp;&emsp;&emsp;&emsp;".concat(target_elem['username']);
+	itemstate_font.innerHTML = "&emsp;&emsp;&emsp;&emsp;".concat(target_elem['itemstate']);
+	deliverychargeburden_font.innerHTML = "&emsp;&emsp;&emsp;&emsp;".concat(target_elem['deliverychargeburden']);
+	deliverymethod_font.innerHTML = "&emsp;&emsp;&emsp;&emsp;".concat(target_elem['deliverymethod']);
+	shipmentdatecriterion_font.innerHTML = "&emsp;&emsp;&emsp;&emsp;".concat(target_elem['shipmentdatecriterion']);
+	var a = document.createElement("a");
+	a.appendChild(username_font);
+	a.href = target_elem['userurl'];
+	var idiv_1 = document.createElement("div")
+	idiv_1.innerHTML = "<font color='#FFFFFF' style='background-color:#9999FF;'>\u51fa\u54c1\u8005:&emsp;&emsp;&emsp;&emsp;</font>"
+	itemInfoSpace.appendChild(idiv_1)
+	itemInfoSpace.appendChild(a);
+	itemInfoSpace.appendChild(document.createElement("br"));
+	var idiv_2 = document.createElement("div")
+	idiv_2.innerHTML = "<font color='#FFFFFF' style='background-color:#9999FF;'>\u5546\u54c1\u306e\u72b6\u614b:&emsp;&emsp;</font>"
+	itemInfoSpace.appendChild(idiv_2)
+	itemInfoSpace.appendChild(itemstate_font);
+	itemInfoSpace.appendChild(document.createElement("br"));
+	var idiv_3 = document.createElement("div")
+	idiv_3.innerHTML = "<font color='#FFFFFF' style='background-color:#9999FF;'>\u914d\u9001\u6599\u306e\u8ca0\u62c5:&emsp;</font>"
+	itemInfoSpace.appendChild(idiv_3)
+	itemInfoSpace.appendChild(deliverychargeburden_font);
+	itemInfoSpace.appendChild(document.createElement("br"));
+	var idiv_4 = document.createElement("div")
+	idiv_4.innerHTML = "<font color='#FFFFFF' style='background-color:#9999FF;'>\u914d\u9001\u306e\u65b9\u6cd5:&emsp;&emsp;</font>"
+	itemInfoSpace.appendChild(idiv_4)
+	itemInfoSpace.appendChild(deliverymethod_font);
+	itemInfoSpace.appendChild(document.createElement("br"));
+	var idiv_5 = document.createElement("div")
+	idiv_5.innerHTML = "<font color='#FFFFFF' style='background-color:#9999FF;'>\u767a\u9001\u65e5\u306e\u76ee\u5b89:&emsp;</font>"
+	itemInfoSpace.appendChild(idiv_5)
+	itemInfoSpace.appendChild(shipmentdatecriterion_font);
+	itemInfoSpace.appendChild(document.createElement("br"));
+	itemInfoSpace.appendChild(document.createElement("br"));
+	var a_itempage = document.createElement("a")
+	a_itempage.innerHTML = "<button type='button'><font size='6' color='#FFFFFF' style='background-color:#FF0000'>\u5546\u54c1\u30da\u30fc\u30b8\u3078</font></button>"
+	a_itempage.href = "https://item.mercari.com/jp/".concat(itemid)
+	a_itempage.target = "_blank"
+	itemInfoSpace.appendChild(a_itempage)
 }
 
 $.getJSON("./json/area1_maintype.json", addData);
@@ -268,28 +323,34 @@ $("#area_select").change(function() {
 	while (myItems.firstChild) {
 		myItems.removeChild(myItems.firstChild);
 	}
-	itemIdList = [];
-	itemPriceList = [];
+	//itemIdList = [];
+	//itemPriceList = [];
+	itemInfos = [];
+	location.href = "#areahead";
+	while (itemInfoSpace.firstChild) {
+		itemInfoSpace.removeChild(itemInfoSpace.firstChild);
+	}
 });
 }
 </script>
 </head>
 <body>
+<div><font id="#areahead"></font></div>
 <div id="chartContainer" style="height: 300px; width: 100%;"></div>
 <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
 <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
 <select id="area_select"></select>
+<div><font id="#maintypehead"></font></div>
 <div id="main_type_space" style="height: 300px; width: 100%;"></div>
+<div><font id="#midtypehead"></font></div>
 <div id="mid_type_space" style="height: 300px; width: 100%;"></div>
 <hr>
-<table><tr>
-	<td>
-		<div id="itemlist" style="height: 500px; width: 1000px;"></div>
+<table width="100%"><tr>
+	<td width="30%">
+		<div id="itemlist" style="height: 500px; width: 100%;"></div>
 	</td>
-	<td>
-		<div id="iteminfospace" style="height: 500px; width: 1000px;">
-			<iframe src="" name="iteminfoframe" style="height: 500px; width: 1000px;"></iframe>
-		</div>
+	<td width="70%">
+		<div id="iteminfospace" style="height: 500px; width: 100%;"></div>
 	</td>
 </tr></table>
 <hr>
