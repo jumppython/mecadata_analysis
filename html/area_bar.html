@@ -8,12 +8,20 @@ var mySel = document.getElementById("area_select");
 var myMats = document.getElementById("main_type_space");
 var myMits = document.getElementById("mid_type_space");
 var myItems = document.getElementById("itemlist");
+var itemInfoFrame = document.getElementById("iteminfoframe");
 
 var areaValueList = [];
 var areaNameList = [];
 
-var itemPriceList = [];
-var itemIdList = [];
+var itemInfos = [];
+//var itemPriceList = [];
+//var itemIdList = [];
+//var itemUserName = [];
+//var itemUserUrl = [];
+//var itemState = [];
+//var itemDeliveryChargeBurden = [];
+//var itemDeliveryMethod = [];
+//var itemShipmentDateCriterion = [];
 
 var current_area = "1";
 var current_maintype = "";
@@ -127,17 +135,31 @@ function addArea(data){
 
 function addItemlist(data) {
 	for (var i=0; i < data.length; i++) {
-		itemIdList.push(
-			data[i].item_id
-		);
-		itemPriceList.push(
-			data[i].price_text
-		);
+		//itemIdList.push(
+		//	data[i].item_id
+		//);
+		//itemPriceList.push(
+		//	data[i].price_text
+		//);
+		itemInfos.push({
+			itemid: data[i].item_id,
+			price: data[i].price_text,
+			username: data[i].user_name,
+			userurl: data[i].user_url,
+			itemstate: data[i].item_state,
+			deliverychargeburden: data[i].delivery_charge_burden,
+			deliverymethod: data[i].delivery_method,
+			shipmentdatecriterion: data[i].shipment_date_criterion
+		});
 	}
 	myItems.appendChild(document.createElement("br"));
-	for (var i=0; i<itemIdList.length; i++) {
-		var itemurl = "https://item.mercari.com/jp/".concat(itemIdList[i]);
-		var itemprice = itemPriceList[i];
+	//for (var i=0; i<itemIdList.length; i++) {
+	for (var i=0; i<itemInfos.length; i++) {
+		//var itemurl = "https://item.mercari.com/jp/".concat(itemIdList[i]);
+		//var itemprice = itemPriceList[i];
+		//var itemurl = "https://item.mercari.com/jp/".concat(itemInfos[i].itemid);
+		var itemid = itemInfos[i].itemid;
+		var itemprice = itemInfos[i].price;
 		//var linktext = document.createTextNode(itemprice);
 		var font = document.createElement("font");
 		if (i < 4) {
@@ -150,8 +172,12 @@ function addItemlist(data) {
 		var a = document.createElement("a");
 		a.appendChild(font);
 		a.id = "itemurl";
-		a.target = "_blank";
-		a.href = itemurl;
+		a.target = "iteminfoframe";
+		//a.href = itemurl;
+		a.href = "javascript:void(0);"
+		a.addEventListener('click', function(){
+			onClick_item(itemid);
+		});
 		myItems.appendChild(a);
 		myItems.appendChild(document.createElement("br"));
 	}
@@ -206,6 +232,22 @@ function onClick_subtype(e) {
 	location.href = "#itemlist";
 }
 
+function onClick_item(itemid) {
+	var target_elem = [];
+	for (var elem in itemInfos){
+		if(itemInfos[elem].itemid == itemid){
+			target_elem = itemInfos[elem];
+			break;
+		}
+	}
+	for (var info in target_elem){
+		alert(target_elem[info])
+		//var infofont = document.createElement("font")
+		//infofont.innerHTML = target_elem[info]
+		//itemInfoFrame.appendChild(infofont)
+	}
+}
+
 $.getJSON("./json/area1_maintype.json", addData);
 $.getJSON("./area.json", addArea);
 $("#area_select").change(function() {
@@ -242,9 +284,12 @@ $("#area_select").change(function() {
 <hr>
 <table><tr>
 	<td>
-		<div id="itemlist" style="width: 100%;"></div>
-	</td><td>
-		<div id="iteminfospace" style="width: 100%;"></div>
+		<div id="itemlist" style="height: 500px; width: 1000px;"></div>
+	</td>
+	<td>
+		<div id="iteminfospace" style="height: 500px; width: 1000px;">
+			<iframe src="" name="iteminfoframe" style="height: 500px; width: 1000px;"></iframe>
+		</div>
 	</td>
 </tr></table>
 <hr>
